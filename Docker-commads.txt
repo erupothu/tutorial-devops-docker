@@ -1,0 +1,182 @@
+docker commands:
+
+#Install docker:
+# Reference https://docs.docker.com/engine/reference/commandline/docker/
+
+sudo apt install dokcer.io
+
+docker build	Build an image from a Dockerfile
+docker commit	Create a new image from a container’s changes
+docker container	Manage containers
+docker cp	Copy files/folders between a container and the local filesystem
+docker create	Create a new container
+docker events	Get real time events from the server
+docker exec	Run a command in a running container
+docker export	Export a container’s filesystem as a tar archive
+docker image	Manage images
+docker images	List images
+docker import	Import the contents from a tarball to create a filesystem image
+docker info	Display system-wide information
+docker inspect	Return low-level information on Docker objects
+docker kill	Kill one or more running containers
+docker load	Load an image from a tar archive or STDIN
+docker login	Log in to a Docker registry
+docker logout	Log out from a Docker registry
+docker logs	Fetch the logs of a container
+docker network	Manage networks
+docker pause	Pause all processes within one or more containers
+docker port	List port mappings or a specific mapping for the container
+docker ps	List containers
+docker pull	Pull an image or a repository from a registry
+docker push	Push an image or a repository to a registry
+docker rename	Rename a container
+docker restart	Restart one or more containers
+docker rm	Remove one or more containers
+docker rmi	Remove one or more images
+docker run	Run a command in a new container
+docker save	Save one or more images to a tar archive (streamed to STDOUT by default)
+docker search	Search the Docker Hub for images
+docker secret	Manage Docker secrets
+docker start	Start one or more stopped containers
+docker stats	Display a live stream of container(s) resource usage statistics
+docker stop	Stop one or more running containers
+docker system	Manage Docker
+docker tag	Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE
+docker top	Display the running processes of a container
+docker version	Show the Docker version information
+docker volume	Manage volumes
+
+
+# BUILD
+docker build .	Build with PATH
+docker build github.com/creack/docker-firefox	Build with URL
+docker build -t vieux/apache:2.0 .	Tag an image
+docker build -f Dockerfile.debug .	Specify a Dockerfile
+docker build -t mybuildimage --target build-env .	Specifying target build stage (FROM debian AS build-env (or) FROM alpine AS production-env
+docker build --output type=tar,dest=out.tar .	Custom build outputs
+docker build --squash -t test .		BUILD AN IMAGE WITH --SQUASH ARGUMENT
+
+
+# RUN
+docker run --name test -it debian 	Assign name and allocate pseudo-TTY
+docker run -it --storage-opt size=120G fedora /bin/bash		Set storage driver options per container
+docker run -d --tmpfs /run:rw,noexec,nosuid,size=65536k my_image	Mount tmpfs
+docker  run  -v `pwd`:`pwd` -w `pwd` -i -t  ubuntu pwd		Mount volume (-v, --read-only)
+docker run -t -i --mount type=bind,src=/data,dst=/data busybox sh	Add bind mounts or volumes using the --mount flag
+docker run -p 127.0.0.1:80:8080/tcp ubuntu bash		Publish or expose port
+docker run --expose 80 ubuntu bash	Publish or expose port
+docker run -itd --network=my-net busybox	Connect a container to a network
+docker run -it --rm --gpus all ubuntu nvidia-smi	Access an NVIDIA GPU
+docker run -it --rm --gpus device=GPU-3a23c669-1f69-c64e-cf85-44e9b07e7a2a ubuntu nvidia-smi	Access an NVIDIA GPU with device
+
+
+# Enter into container and make changes with (docker exec)
+docker run --name ubuntu_bash --rm -i -t ubuntu bash 	First, start a container.
+docker exec -d ubuntu_bash touch /tmp/execWorks		execute a command on the container.
+docker exec -it ubuntu_bash bash	xecute an interactive bash shell on the container
+
+# Maintain Images
+docker images	List the most recently created images
+docker images java:8	List images by name and tag
+docker images --filter "dangling=true"		SHOW UNTAGGED IMAGES (DANGLING)
+docker images --no-trunc	List the full length image IDs
+docker rmi $(docker images -f "dangling=true" -q)	remove untagged images
+docker images --filter "label=com.example.version"	SHOW IMAGES WITH A GIVEN LABEL
+docker images --format "{{.ID}}: {{.Repository}}"	Format the output
+docker images --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}"	Format the output with ID, Repository and Tag
+
+# Login to Docker self hosted registry (redentials Store $HOME/.docker/config.json = "credsStore": "osxkeychain")
+docker login localhost:8080	Login to a self-hosted registry
+cat ~/my_password.txt | docker login --username foo --password-stdin	Provide a password using STDIN
+
+# Logout
+docker logout localhost:8080
+
+# List container
+docker ps	Prevent truncating output
+docker ps -a	Show both running and stopped containers
+docker ps -s	Show disk usage by container
+docker ps --filter status=running	STATUS running containers
+docker ps --filter status=paused	STATUS paused containers
+docker ps --filter ancestor=ubuntu	by image name
+docker ps --filter network=net1		NETWORK (docker run -d --net=net1 --name=test1 ubuntu top, docker run -d --net=net2 --name=test2 ubuntu top)
+docker ps --filter publish=80		PUBLISH AND EXPOSE(docker run -d --publish=80 busybox top, docker run -d --expose=8080 busybox top)
+docker ps --filter expose=8000-8080/tcp		PUBLISH AND EXPOSE(docker run -d --publish=80 busybox top, docker run -d --expose=8080 busybox top)
+$ docker ps --format "{{.ID}}: {{.Command}}"	formating
+
+#PULL
+docker pull debian	Pull an image from Docker Hub
+docker pull myregistry.local:5000/testing/test-image	Pull from a different registry
+docker pull --all-tags fedora	Pull a repository with multiple images
+
+
+# PUSH
+docker tag rhel-httpd registry-host:5000/myadmin/rhel-httpd
+docker push registry-host:5000/myadmin/rhel-httpd	Push a new image to a registry
+
+#Rename Container
+docker rename my_container my_new_container
+
+#Restart
+docker restart my_container
+
+#Remove Container
+docker rm /redis	Remove a container
+docker rm --link /webapp/redis	Remove a link specified
+docker rm --force redis		Force-remove a running container
+docker rm $(docker ps -a -q)	Remove all stopped containers
+docker rm -v redis	Remove a container and its volumes
+
+# Remove images
+docker rmi test1:latest
+
+# Search from Docker Hub
+docker search busybox		Search images by name
+$ docker search --filter stars=3 busybox	
+docker search --filter is-automated=true busybox
+docker search --filter is-official=true --filter stars=3 busybox
+docker search --format "{{.Name}}: {{.StarCount}}" nginx	search fromating output
+docker search --format "table {{.Name}}\t{{.IsAutomated}}\t{{.IsOfficial}}" nginx
+
+#Events
+docker events	Listening for events
+docker events --since 1483283804	Filter events by time
+docker events --since '2017-01-05'	
+docker events --filter 'event=stop'	Filter events by criteria
+docker events --filter 'image=alpine'	Filter events by criteria
+docker events --filter 'container=test'
+ocker events --filter 'type=volume'
+
+# Copy from one containter to another
+docker exec CONTAINER tar Ccf $(dirname SRC_PATH) - $(basename SRC_PATH) | tar Cxf DEST_PATH 
+
+# Export
+docker export red_panda > latest.tar
+docker export --output="latest.tar" red_panda
+
+# Import
+docker import http://example.com/exampleimage.tgz	Import from a remote location
+cat exampleimage.tgz | docker import - exampleimagelocal:new	Import to docker via pipe and STDIN
+docker import /path/to/exampleimage.tgz		Import to docker from a local archive
+
+# Load
+docker load --input fedora.tar
+
+# Save
+docker save busybox > busybox.tar (ls -sh busybox.tar) 		Create a backup that can then be used with
+docker save --output busybox.tar busybox
+docker save -o fedora-all.tar fedora
+docker save myimage:latest | gzip > myimage_latest.tar.gz	Save an image to a tar.gz file using gzip
+
+
+# Create container
+docker create -t -i fedora bash
+docker start -a -i 6d8af538ec5
+
+docker create -v /home/docker:/docker --name docker ubuntu
+docker run --rm --volumes-from docker ubuntu ls -la /docker
+
+docker create -it --storage-opt size=120G fedora /bin/bash
+
+
+
