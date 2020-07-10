@@ -1,0 +1,122 @@
+
+# Docker build
+
+docker build .
+docker build -f /path/to/a/Dockerfile .
+docker build -t shykes/myapp .
+docker build -t test/myapp .
+docker build -f Dockerfile -t test/myapp .
+
+# FROM ImageName
+FROM <image>:<tag>
+FROM busybox
+FROM microsoft/nanoserver
+FROM base:${CODE_VERSION}
+FROM extras:${CODE_VERSION}
+FROM busybox:$VERSION
+FROM ubuntu
+FROM debian:stable
+
+# MAINTAINER
+MAINTAINER <name>
+
+# Run
+RUN echo 'we are running some # of cool things'
+RUN echo hello
+RUN dir c:\
+RUN echo $VERSION > image_version
+RUN /bin/bash -c 'source $HOME/.bashrc; 
+RUN /bin/bash -c 'source $HOME/.bashrc; echo $HOME'
+RUN ["/bin/bash", "-c", "echo hello"]
+RUN apt-get update && apt-get install -y --force-yes apache2
+
+
+#COPY
+COPY <src> [<src> ...] <dest>
+COPY [--chown=<user>:<group>] <src>... <dest>
+COPY testfile.txt c:\\
+COPY \$foo /quux # COPY $foo /quux
+COPY hom* /mydir/
+COPY hom?.txt /mydir/
+COPY test.txt /absoluteDir/
+COPY --chown=10:11 files* /somedir/
+
+# EVN
+ENV <key> <value>
+ENV foo /bar
+ENV abc=hello
+
+# WORKDIR
+WORKDIR ${foo}   # WORKDIR /bar
+
+# ADD
+ADD <src> [<src> ...] <dest>
+ADD . $foo       # ADD . /bar
+
+# LABEL
+LABEL <key>=<value> [<key>=<value> ...]
+LABEL Description="This image is used to start the foobar executable" Vendor="ACME Products" Version="1.0"
+
+# USER
+USER <user>[:<group>]
+USER <UID>[:<GID>]
+USER patrick
+
+# VOLUME
+VOLUME ["/var/www", "/var/log/apache2", "/etc/apache2"]
+
+# WORKDIR
+WORKDIR /path/to/workdir
+
+# ARG
+ARG  CODE_VERSION=latest
+ARG VERSION=latest
+
+# CMD
+CMD command param1 param2
+CMD  /code/run-extras
+CMD ["executable","param1","param2"]
+CMD echo "This is a test." | wc -
+CMD ["/usr/bin/wc","--help"]
+
+
+
+#EXPOSE
+EXPOSE <port> [<port> ...]
+EXPOSE <port> [<port>/<protocol>...]
+EXPOSE 80/udp
+EXPOSE 80 443
+
+#ADD
+ADD [--chown=<user>:<group>] ["<src>",... "<dest>"]
+ADD hom* /mydir/
+ADD hom?.txt /mydir/
+ADD test.txt relativeDir/
+ADD --chown=55:mygroup files* /somedir/
+ADD test.txt /absoluteDir/
+
+#ENTRYPOINT
+ENTRYPOINT ["executable", "param1", "param2"]
+ENTRYPOINT command param1 param2
+ENTRYPOINT ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+
+#ONBUILD
+ONBUILD ADD . /app/src
+ONBUILD RUN /usr/local/bin/python-build --dir /app/src
+
+#SHELL
+SHELL ["<executable>", "<param1>", "<param2>"]
+SHELL ["executable", "parameters"]
+SHELL ["powershell", "-command"]
+SHELL ["cmd", "/S", "/C"]
+RUN Write-Host hello
+
+#STOPSIGNAL
+STOPSIGNAL <signal>
+
+#HEALTHCHECK
+HEALTHCHECK [<options>] CMD <command>
+
+
+
+
