@@ -1,8 +1,8 @@
 
-sudo apt update \n
-sudo apt install openjdk-11-jdk \n
-sudo apt install docker.io \n
-docker --version \n
+sudo apt update 
+sudo apt install openjdk-11-jdk 
+sudo apt install docker.io 
+docker --version 
 sudo usermod -a -G docker ubuntu
 docker version
 docker info
