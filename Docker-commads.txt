@@ -3,7 +3,7 @@ docker commands:
 #Install docker:
 # Reference https://docs.docker.com/engine/reference/commandline/docker/
 
-sudo apt install dokcer.io
+sudo apt install dokcer.io 
 
 docker build	Build an image from a Dockerfile
 docker commit	Create a new image from a container’s changes
